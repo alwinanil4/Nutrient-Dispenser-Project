@@ -1,50 +1,29 @@
-// Real-Time Nutrient Dispenser: Arduino side
-// Serial '1' = Healthy (Green), '2' = Chlorosis (Yellow),
-// '3' = Transpiration Stress (Red), '0' = All OFF
-
-const int GREEN_LED  = 8;
-const int YELLOW_LED = 9;
-const int RED_LED    = 10;
-
-void allOff() {
-  digitalWrite(GREEN_LED, LOW);
-  digitalWrite(YELLOW_LED, LOW);
-  digitalWrite(RED_LED, LOW);
-}
+const int GREEN_PIN = 8;
+const int YELLOW_PIN = 9;
+const int RED_PIN = 10;
 
 void setup() {
-  pinMode(GREEN_LED, OUTPUT);
-  pinMode(YELLOW_LED, OUTPUT);
-  pinMode(RED_LED, OUTPUT);
-  allOff();
-
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(YELLOW_PIN, OUTPUT);
+  pinMode(RED_PIN, OUTPUT);
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(YELLOW_PIN, LOW);
+  digitalWrite(RED_PIN, LOW);
   Serial.begin(9600);
-  Serial.println("Arduino ready. Send 0, 1, 2 or 3.");
 }
 
 void loop() {
   if (Serial.available() > 0) {
     char signal = Serial.read();
-
-    if (signal == '1') {
-      allOff();
-      digitalWrite(GREEN_LED, HIGH);
-      Serial.println("Healthy -> GREEN");
+    digitalWrite(GREEN_PIN, LOW);
+    digitalWrite(YELLOW_PIN, LOW);
+    digitalWrite(RED_PIN, LOW);
+    if (signal == 'G') {
+      digitalWrite(GREEN_PIN, HIGH);
+    } else if (signal == 'Y') {
+      digitalWrite(YELLOW_PIN, HIGH);
+    } else if (signal == 'R') {
+      digitalWrite(RED_PIN, HIGH);
     }
-    else if (signal == '2') {
-      allOff();
-      digitalWrite(YELLOW_LED, HIGH);
-      Serial.println("Chlorosis -> YELLOW");
-    }
-    else if (signal == '3') {
-      allOff();
-      digitalWrite(RED_LED, HIGH);
-      Serial.println("Transpiration Stress -> RED");
-    }
-    else if (signal == '0') {
-      allOff();
-      Serial.println("No leaf -> ALL OFF");
-    }
-    // anything else is ignored
   }
 }
